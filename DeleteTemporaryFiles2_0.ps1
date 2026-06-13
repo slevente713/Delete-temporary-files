@@ -44,5 +44,6 @@ if ($answer2 -match "y") {
 }
 cd "$env:USERPROFILE\Documents"
 rmdir TestFolder
+Clear-RecycleBin -Force -ErrorAction SilentlyContinue
 Set-ExecutionPolicy RemoteSigned -Force -Scope LocalMachine
 pause
