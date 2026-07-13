@@ -22,18 +22,18 @@ Write-Host "Windows Error Reporting gyorsítotár törlése... Removing Windows 
 rm "C:\Windows\Minidump\*" -Recurse -Force -ErrorAction SilentlyContinue
 rm "$env:LOCALAPPDATA\CrashDumps\*" -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "Windows Error Reporting gyorsítotár sikeresen törlésre került. Windows Error Reporting cache were successfully removed." -ForegroundColor Green
-$answer = Read-Host "Szeretnéd törölni az Offline Web Pages mappa tartalmát? (y/n) Would you like to delete the files in Offline Web Pages Folder? (y/n)"
-if ($answer -match "y") {
-    $path = "C:\Windows\Offline Web Pages"
-    if (Test-Path $path) {
-        rm "$path\*" -Recurse -Force -ErrorAction SilentlyContinue
+$question1 = Read-Host "Szeretnéd törölni az Offline Web Pages mappa tartalmát? (y/n) Would you like to delete the files in Offline Web Pages Folder? (y/n)"
+if ($question1 -match "y") {
+    $path1 = "C:\Windows\Offline Web Pages"
+    if (Test-Path $path1) {
+        rm "$path1\*" -Recurse -Force -ErrorAction SilentlyContinue
         Write-Host "Az Offline Web Pages mappa tartalma sikeresen törlődött. The files in the Offline Web Pages folder were successfully removed." -ForegroundColor Green
     }
 } else {
     Write-Host "Megszakítottad az Offline Web Pages mappa tartalmának törlését. You cancelled removing the files in the Offline Web Pages folder." -ForegroundColor Yellow
 }
-$answer2 = Read-Host "Szeretnéd törölni a Windows LOG fájlokat? (y/n) Would you like to delete the Windows LOG files? (y/n)"
-if ($answer2 -match "y") {
+$question2 = Read-Host "Szeretnéd törölni a Windows LOG fájlokat? (y/n) Would you like to delete the Windows LOG files? (y/n)"
+if ($question2 -match "y") {
     $path2 = "C:\Windows\LogFiles"
     if (Test-Path $path2) {
         rm "$path2\*" -Recurse -Force -ErrorAction SilentlyContinue
@@ -42,6 +42,47 @@ if ($answer2 -match "y") {
 } else {
     Write-Host "Megszakítottad a Windows LOG fájlok törlését. You cancelled removing Windows LOG files." -ForegroundColor Yellow
 }
+
+$question3 = Read-Host "Szeretnéd kikapcsolni a SysMain (vagy SuperFetch) szolgáltatást hogy a Prefetch mappába ne generálódjon több fájl? (HDD-n nem javasolt) [Y/N] Would you like to turn off SysMain (or SuperFetch) to don't generate more files to the Prefetch folder? (Not recomended in HDDs.) [Y/N]"
+if ($question3 -match "y") {
+    $services = @(
+    "SysMain"           # SysMain (Superfetch)
+)
+
+foreach ($service in $services) {
+    $serviceObj = Get-Service -Name $service -ErrorAction SilentlyContinue
+    
+    if ($serviceObj) {
+        try {
+            if ($serviceObj.Status -ne 'Stopped') {
+                Stop-Service -Name $service -Force -Confirm:$false -ErrorAction SilentlyContinue
+            }
+            Set-Service -Name $service -StartupType Disabled
+        }
+    }
+}
+        Write-Host "A SysMain (SuperFetch) szolgáltatás sikeresen letiltva, és leállítva. The service SysMain (SuperFetch) is successfully disabled and stopped" -ForegroundColor Green
+    }
+} else {
+    $services = @(
+    "SysMain"           # SysMain (Superfetch)
+)
+
+foreach ($service in $services) {
+    $serviceObj = Get-Service -Name $service -ErrorAction SilentlyContinue
+    
+    if ($serviceObj) {
+        try {
+            if ($serviceObj.Status -ne 'Running') {
+                Start-Service -Name $service -Force -Confirm:$false -ErrorAction SilentlyContinue
+            }
+            Set-Service -Name $service -StartupType Automatic
+        }
+    }
+}
+    Write-Host "Megszakítottad a Sysmain (SuperFetch) kikapcsolását. You cancelled turning off SysMain (SuperFetch)." -ForegroundColor Yellow
+}
+
 cd "$env:USERPROFILE\Documents"
 rmdir TestFolder
 Clear-RecycleBin -Force -ErrorAction SilentlyContinue
