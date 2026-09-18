@@ -14,10 +14,6 @@ cd $env:"USERPROFILE"\Downloads
 Then, answer the questions, and you're done.
 
 ### With Windows PowerShell
-#### Option 1
-Make sure, that your Execution Policy is set to **Bypass**, or **Unrestricted**. Then, right-click on the script, that you downloaded, and select ***Run with PowerShell***. If you have administrator priviliges, then answer *y* to that question, that asks you for administrator priviliges. Then answer the questions, and you're done.
-
-#### Option 2
 Start Windows PowerShell **as administrator**, and type this, to change the Execution Policy to Bypass for the Current Session:
 ```sh
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
@@ -35,7 +31,7 @@ Then, answer the questions, and you're done.
 - Prefetch (SysMain/SuperFetch) files. (C:\Windowws\Prefetch)
 - Recycle bin (C:\$Recycle.bin)
 - DNS Cache (ipconfig /flushdns)
-- Windows Update junk files (C:\Windows\SoftwareDistribution\Download) [```NoWinUpdateTempDeletion_DeleteTemporaryFiles5_0.ps1``` doesn't remove this]
+- Windows Update junk files (C:\Windows\SoftwareDistribution\Download) [```NoWinUpdateTempDeletion_DeleteTemporaryFiles5_0.ps1``` doesn't remove these files]
 - Delivery Optimization cache (C:\Windows\DeliveryOptimization\Cache)
 - Windows Error Reporting files (C:\Windows\Minidump) ($env:"USERPROFILE"\AppData\Local\CrashDumps)
 - Old, not used components from WinSxS (DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase)
