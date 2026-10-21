@@ -133,11 +133,11 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 		Write-Host "Successfully removed Windows LOG files." -ForegroundColor Green
             	
 		Write-Host "Removing Chocolatey LOG files... (The script will skip this, if you don't have Chocolatey installed.)" -ForegroundColor Cyan
-			rm "C:\ProgramData\chocolatey\logs" -Recurse -Force -ErrorAction SilentlyContinue
+			rm "C:\ProgramData\chocolatey\logs\*" -Recurse -Force -ErrorAction SilentlyContinue
 		Write-Host "Successfully removed Chocolatey LOG files." -ForegroundColor Green
 		
 		Write-Host "Removing Claude LOG files (The script will skip this, if you don't have Claude Desktop installed on your PC.)" -ForegroundColor Cyan
-			rm "C:\ProgramData\Claude\Logs" -Recurse -Force -ErrorAction SilentlyContinue
+			rm "C:\ProgramData\Claude\Logs\*" -Recurse -Force -ErrorAction SilentlyContinue
 		Write-Host "Successfully removed Claude LOG files." -ForegroundColor Green
 
 		Write-Host "Removing HP LOG files... (The script will skip this, if your PC isn't from HP.)" -ForegroundColor Cyan
