@@ -1,4 +1,5 @@
 Write-Host "Welcome in Delete-Temporary-Files!" -ForegroundColor Blue
+Write-Host ""
 
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin) {
@@ -77,11 +78,12 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
                 Write-Host "Successfully removed Windows Update temporary files." -ForegroundColor Green
             }
             else {
-                
+                Write-Host "You cancelled removing the Windows Update Temporary Files." -ForegroundColor Yellow
             }
 
         $question2 = Read-Host "Would you like to delete the files in Offline Web Pages Folder? [y/N]"
             if ($question2 -match "y") {
+                Write-Host "Removing all files in the Offline Web Pages folder..." -ForegroundColor Cyan
                 rm "C:\Windows\Offline Web Pages\*" -Recurse -Force -ErrorAction SilentlyContinue
                 Write-Host "Successfully removed the files in the Offline Web Pages folder." -ForegroundColor Green
             }
@@ -91,7 +93,12 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 
         $question3 = Read-Host "Would you like to delete the Windows LOG files? [y/N]"
             if ($question3 -match "y") {
+                
+		Write-Host "Removing Performance Logs..." -ForegroundColor Cyan
                 rm "C:\PerfLogs\*" -Recurse -Force -ErrorAction SilentlyContinue
+		Write-Host "Successfully removed Performance Logs" -ForegroundColor Green
+		
+		Write-Host "Removing Windows System LOGs..." -ForegroundColor Cyan
                 $pathWinLog = "C:\Windows\Logs"
                 Get-ChildItem -Path $pathWinLog -Recurse -File | ForEach-Object {
                     Remove-Item $_.FullName -Force -ErrorAction SilentlyContinue
@@ -119,6 +126,7 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 
         $question4 = Read-Host "Would you like to delete your previous Windows install's junk files (Windows.old)? [y/N]"
             if ($question4 -match "y") {
+		Write-Host "Removing Windows.old..." -ForegroundColor Cyan
                 rm "C:\Windows.old" -Recurse -Force -ErrorAction SilentlyContinue
                 Write-Host "Successfully removed your previous Windows install's junk files (Windows.old)." -ForegroundColor Green
             }
@@ -128,6 +136,7 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 
         $question5 = Read-Host "Would you like to turn off hibernation? [y/N]"
             if ($question5 -match "y") {
+		Write-Host "Turning off hibernation..." -ForegroundColor Cyan
                 powercfg.exe -h off
                 Write-Host "Successfully turned off hibernation." -ForegroundColor Green
             }
@@ -136,6 +145,7 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
             }
         $question6 = Read-Host "Would you like to remove, all, old, not used Windows components, from WinSxS? [y/N]"
             if ($question6 -match "y") {
+		Write-Host "Starting Cleanup..." -ForegroundColor Cyan
                 DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase
                 Write-Host "Successfully removed all, old, not used Windows components, from WinSxS." -ForegroundColor Green
             }
