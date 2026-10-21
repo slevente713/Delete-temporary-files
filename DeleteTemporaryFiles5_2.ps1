@@ -146,12 +146,12 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 
 			$pathHPstreamLOG = "C:\ProgramData\Hewlett-Packard\StreamLog"
 			Get-ChildItem -Path $pathHPstreamLOG\* -ErrorAction SilentlyContinue | ForEach-Object {
-                    		Remove-Item $_.FullName -Force -ErrorAction SilentlyContinue
+                    		Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
 			}
 # a random comment
 			$pathHPstreamLOG2 = "C:\ProgramData\HP\StreamLog"
 			Get-ChildItem -Path $pathHPstreamLOG2\* -ErrorAction SilentlyContinue | ForEach-Object {
-				Remove-Item $_.FullName -Force -ErrorAction SilentlyContinue
+				Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
 			}
 			rm "C:\ProgramData\HP\ExternalApps\Diagnostics\Logs\*" -Recurse -Force -ErrorAction SilentlyContinue
 			rm "C:\ProgramData\HP\ExternalApps\TelemetryDataCollector\*" -Recurse -Force -ErrorAction SilentlyContinue
