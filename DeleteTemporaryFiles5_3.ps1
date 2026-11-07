@@ -273,7 +273,10 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
                 if (Test-Path "C:\ProgramData\NVIDIA Corporation\Logs") {
                     Get-ChildItem -Path "C:\ProgramData\NVIDIA Corporation\Logs" -Recurse -File | Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-15) } | Remove-Item -Force -ErrorAction SilentlyContinue
                 }
-                Write-Host "Successfully removed NVIDIA cache files, and NVIDIA temporary files."
+                Write-Host "Successfully removed NVIDIA cache files, and NVIDIA temporary files." -ForegroundColor Green
+            }
+            else {
+                Write-Host "You cancelled removing NVIDIA cache and temporary files." -ForegroundColor Yellow
             }
         pause
     }
