@@ -1,10 +1,31 @@
-Write-Host "Welcome in Delete-Temporary-Files!" -ForegroundColor Blue
+$Host.UI.RawUI.WindowTitle = 'Delete-Temporary-Files 5.3'
+
+if ($IsMacOS) {
+    Write-Host "Sorry, you are using MacOS, that isn't supported by Delete-Temporary-Files." -ForegroundColor Red
+    Write-Host "The script will automatically close itself after 20 seconds, or press Ctrl+C (^C) to close this window."
+    Start-Sleep -Seconds 20
+    exit
+}
+else {}
+
+if ($IsLinux) {
+    Write-Host "Sorry, you are using Linux, or FreeBSD, that isn't supported by Delete-Temporary-Files." -ForegroundColor Red
+    Write-Host "The script will automatically close itself after 20 seconds, or press Ctrl+C (^C) to close this window."
+    Start-Sleep -Seconds 20
+    exit
+}
+else {}
+
+if ($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows) {
+
+Write-Host "Welcome to Delete-Temporary-Files!" -ForegroundColor Blue
 Write-Host ""
 
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin) {
     Write-Host "[WARNING]: You ran this script, without elevated priviliges. Some features may not work." -ForegroundColor Red
-$continueAnyway = Read-Host "Would you like to restart the script as administrator? [Y/n]"
+    Write-Host "Would you like to restart the script as administrator? [Y/n]" -ForegroundColor White
+    $continueAnyway = Read-Host ":"
     if ($continueAnyway -match "n") {
         Write-Host "Removing the user's temporary files..." -ForegroundColor Cyan
             rm "C:\Users\Default\AppData\Local\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue
@@ -22,11 +43,22 @@ $continueAnyway = Read-Host "Would you like to restart the script as administrat
         Write-Host "Removing Windows Error Reporting files..." -ForegroundColor Cyan
             rm "$env:USERPROFILE\AppData\Local\CrashDumps\*" -Recurse -Force -ErrorAction SilentlyContinue
         Write-Host "Successfully removed Windows Error Reporting files." -ForegroundColor Green
+
+        Write-Host "Would you like to remove your user's LOG files? [y/N]" -ForegroundColor Cyan
+        $userquestion1 = Read-Host ":"
+        if ($userquestion1 -match "y") {
+            Write-Host "Removing all log files of the current user..." -ForegroundColor Cyan
+			    Get-ChildItem "$env:USERPROFILE\AppData" -Filter *.log -Recurse -File -Force -ErrorAction SilentlyContinue |
+                    Where-Object DirectoryName -match '\\[^\\]*(logs?|temp|diagnostics)(\\|$)' |
+                    Remove-Item -Force -ErrorAction SilentlyContinue
+            Write-Host "Successfully removed all log files of the current user." -ForegroundColor Green
+        }
         pause
 
     }
     else {
         Start-Process powershell -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$PSCommandPath`""
+        clear
         exit
     }
 }
@@ -70,14 +102,15 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 
         Write-Host "Removing Windows Error Reporting files..." -ForegroundColor Cyan
         	rm "C:\Windows\Minidump\*" -Recurse -Force -ErrorAction SilentlyContinue
-        	rm "$env:LOCALAPPDATA\CrashDumps\*" -Recurse -Force -ErrorAction SilentlyContinue
+        	rm "$env:USERPROFILE\AppData\Local\CrashDumps\*" -Recurse -Force -ErrorAction SilentlyContinue
         Write-Host "Successfully removed Windows Error Reporting files." -ForegroundColor Green
 
         Write-Host "Removing ActiveX temporary files, and Java Applet temporary files..." -ForegroundColor Cyan
         	rm "C:\Windows\Downloaded Program Files\*" -Recurse -Force -ErrorAction SilentlyContinue
         Write-Host "Successfully removed ActiveX temporary files, and Java Applet temporary files." -ForegroundColor Green
 
-        $question1 = Read-Host "Would you like to delete Windows Update temporary files (Not recommended if an update is downloading or installing.) [y/N]"
+        Write-Host "Would you like to delete Windows Update temporary files (Not recommended if an update is downloading or installing.) [y/N]" -ForegroundColor White
+        $question1 = Read-Host ":"
             if ($question1 -match "y") {
                 Write-Host "Removing Windows Update temporary files..." -ForegroundColor Cyan
                 rm "C:\Windows\SoftwareDistribution\Download\*" -Recurse -Force -ErrorAction SilentlyContinue
@@ -87,17 +120,19 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
                 Write-Host "You cancelled removing the Windows Update Temporary Files." -ForegroundColor Yellow
             }
 
-        $question2 = Read-Host "Would you like to delete the files in Offline Web Pages Folder? [y/N]"
+        Write-Host "Would you like to delete the files in Offline Web Pages Folder? [y/N]" -ForegroundColor White
+        $question2 = Read-Host ":"
             if ($question2 -match "y") {
-                Write-Host "Removing all files in the Offline Web Pages folder..." -ForegroundColor Cyan
+                Write-Host "Removing all files from the Offline Web Pages folder..." -ForegroundColor Cyan
                 	rm "C:\Windows\Offline Web Pages\*" -Recurse -Force -ErrorAction SilentlyContinue
-                Write-Host "Successfully removed the files in the Offline Web Pages folder." -ForegroundColor Green
+                Write-Host "Successfully removed the files from the Offline Web Pages folder." -ForegroundColor Green
             }
             else {
                 Write-Host "You cancelled removing the files in the Offline Web Pages folder." -ForegroundColor Yellow
             }
 
-        $question3 = Read-Host "Would you like to delete the Windows LOG files? [y/N]"
+        Write-Host "Would you like to delete the Windows LOG files? [y/N]" -ForegroundColor White
+        $question3 = Read-Host ":"
             if ($question3 -match "y") {
                 
 		Write-Host "Removing Performance Logs..." -ForegroundColor Cyan
@@ -131,6 +166,12 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 			rm "C:\Windows\System32\NetSetupMig.log" -Force -ErrorAction SilentlyContinue
 			rm "C:\Windows\Panther\UnattendGC\*.log" -Recurse -Force -ErrorAction SilentlyContinue
 		Write-Host "Successfully removed Windows LOG files." -ForegroundColor Green
+
+        Write-Host "Removing all log files of the current user..." -ForegroundColor Cyan
+			Get-ChildItem "$env:USERPROFILE\AppData" -Filter *.log -Recurse -File -Force -ErrorAction SilentlyContinue |
+                Where-Object DirectoryName -match '\\[^\\]*(logs?|temp|diagnostics)(\\|$)' |
+                Remove-Item -Force -ErrorAction SilentlyContinue
+            Write-Host "Successfully removed all log files of the current user." -ForegroundColor Green
             	
 		Write-Host "Removing Chocolatey LOG files... (The script will skip this, if you don't have Chocolatey installed.)" -ForegroundColor Cyan
 			rm "C:\ProgramData\chocolatey\logs\*" -Recurse -Force -ErrorAction SilentlyContinue
@@ -153,6 +194,7 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 			Get-ChildItem -Path $pathHPstreamLOG2\* -ErrorAction SilentlyContinue | ForEach-Object {
 				Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
 			}
+		
 			rm "C:\ProgramData\HP\ExternalApps\Diagnostics\Logs\*" -Recurse -Force -ErrorAction SilentlyContinue
 			rm "C:\ProgramData\HP\ExternalApps\TelemetryDataCollector\*" -Recurse -Force -ErrorAction SilentlyContinue
 			rm "C:\ProgramData\HP\smartatr.log" -Force -ErrorAction SilentlyContinue
@@ -172,7 +214,7 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 			rm "C:\Program Files (x86)\Mozilla Maintenance Service\logs\*" -Recurse -Force -ErrorAction SilentlyContinue
 		Write-Host "Successfully removed Mozilla Maintence service LOGs." -ForegroundColor Green
 			
-		Write-Host "Removing Razer Chorma LOG files... (If you don't have Razer Chroma installed on your PC, it will skip this.)" -ForegroundColor Green
+		Write-Host "Removing Razer Chorma LOG files... (If you don't have Razer Chroma installed on your PC, it will skip this.)" -ForegroundColor Cyan
 			rm "C:\Program Files (x86)\Razer Chroma SDK\logs\*" -Recurse -Force -ErrorAction SilentlyContinue
 		Write-Host "Successfully removed Razer Chorma LOG files." -ForegroundColor Green
 
@@ -182,35 +224,42 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
                 Write-Host "You cancelled removing LOG files." -ForegroundColor Yellow
             }
 
-        $question4 = Read-Host "Would you like to delete your previous Windows install's junk files (Windows.old)? [y/N]"
+        Write-Host "Would you like to delete your previous Windows install's junk files (Windows.old)? [y/N]" -ForegroundColor White
+        $question4 = Read-Host ":"
             if ($question4 -match "y") {
-		Write-Host "Removing Windows.old..." -ForegroundColor Cyan
-                	rm "C:\Windows.old" -Recurse -Force -ErrorAction SilentlyContinue
+		        Write-Host "Removing Windows.old..." -ForegroundColor Cyan
+                rm "C:\Windows.old" -Recurse -Force -ErrorAction SilentlyContinue
                 Write-Host "Successfully removed your previous Windows install's junk files (Windows.old)." -ForegroundColor Green
             }
             else {
                 Write-Host "You cancelled removing your previous Windows install's junk files (Windows.old)." -ForegroundColor Yellow
             }
-
-        $question5 = Read-Host "Would you like to turn off hibernation? [y/N]"
+        
+        Write-Host "Would you like to turn off hibernation? [y/N]" -ForegroundColor White
+        $question5 = Read-Host ":"
             if ($question5 -match "y") {
-		Write-Host "Turning off hibernation..." -ForegroundColor Cyan
-                	powercfg.exe -h off
+		        Write-Host "Turning off hibernation..." -ForegroundColor Cyan
+                    powercfg.exe -h off
                 Write-Host "Successfully turned off hibernation." -ForegroundColor Green
             }
             else {
                 Write-Host "You cancelled turning hibernation off." -ForegroundColor Yellow
             }
-        $question6 = Read-Host "Would you like to remove, all, old, not used Windows Update components, from WinSxS? (USE AT YOUR OWN RISK!) [y/N]"
+
+        Write-Host "Would you like to remove, all, old, not used Windows Update components, from WinSxS? (USE AT YOUR OWN RISK!) [y/N]" -ForegroundColor White
+        $question6 = Read-Host ":"
             if ($question6 -match "y") {
-		Write-Host "Starting Cleanup..." -ForegroundColor Cyan
+	        	Write-Host "Starting Cleanup..." -ForegroundColor Cyan
                 	dism /Online /Cleanup-Image /StartComponentCleanup /ResetBase
                 Write-Host "Successfully removed all, old, not used Windows Update components, from WinSxS." -ForegroundColor Green
             }
             else {
                 Write-Host "You cancelled removing all, old, not used Windows components, from WinSxS." -ForegroundColor Yellow
             }
-        $question7 = Read-Host "Would you like to remove NVIDIA cache files, and NVIDIA temporary files? [WARNING]: ONLY ANSWER Y/y TO THIS QUESTION, IF YOU HAVE AN NVIDIA GPU! (Some games may load a little bit slower.) (It will only delete files, that older than 15 days.) [y/N]" 
+
+        Write-Host "Would you like to remove NVIDIA cache files, and NVIDIA temporary files? (If your GPU Isn't from NVIDIA, then the script will skip this.)" -ForegroundColor White
+        Write-Host " (Some games may load a little bit slower.) (It will only delete files, that older than 15 days.) [y/N]" -ForegroundColor Yellow
+        $question7 = Read-Host ":"
             if ($question7 -match "y") {
                 if (Test-Path "C:\ProgramData\NVIDIA Corporation\NV_Cache") {
                     Get-ChildItem -Path "C:\ProgramData\NVIDIA Corporation\NV_Cache" -Recurse -File | Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-15) } | Remove-Item -Force -ErrorAction SilentlyContinue
@@ -228,3 +277,5 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
             }
         pause
     }
+}
+else {}
