@@ -38,4 +38,4 @@ And 🚫 means, that, that version has no support at the moment.*
 ✅ means it's usuable, and supported.*
 
 ## Reporting a Vulnerability
-If you found Security vulnerabilities, or bugs, please report it to me, via the *Issues* menu, or [via E-Mail](mailto:slevente001@proton.me). (slevente001@proton.me)
+If you've found Security vulnerabilities, please report it to me, via [E-Mail](mailto:slevente001@proton.me). (slevente001@proton.me)
